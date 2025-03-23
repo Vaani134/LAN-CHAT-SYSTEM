@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Register</title>
+    
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Link to your custom styles.css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    <!-- Favicon icon -->
+    <link rel="icon" href="{{ url_for('static', filename='second.png') }}">
+
+    <style>
+        /* Gradient background from purple to black */
+        body {
+            background: linear-gradient(135deg, #6a1b9a, #121212); /* Purple to black gradient */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Reduced width container for portrait layout */
+        .container {
+            background-color: rgba(31, 31, 31, 0.8);  /* Semi-transparent black for the form container */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;  /* Set a max-width to make the container more narrow */
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            color: #fff;
+        }
+
+        .form-control {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #6a1b9a;  /* Purple border */
+        }
+
+        .form-control:focus {
+            border-color: #9c27b0;  /* Lighter purple */
+        }
+
+        button {
+            background-color: #6a1b9a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #9c27b0;  /* Lighter purple */
+        }
+
+        .alert {
+            color: #fff;
+            background-color: #d32f2f;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert.success {
+            background-color: #388e3c;
+        }
+
+        .alert a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .text-center a {
+            color: #fff;
+        }
+
+        .text-center a:hover {
+            color: #9c27b0;  /* Purple hover for the link */
+        }
+
+        /* Additional styles for CAPTCHA section */
+        .captcha-section {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .captcha-section img {
+            max-width: 100%; /* Ensure the image is responsive */
+            height: auto;
+            margin-bottom: 10px; /* Space below the image */
+        }
+
+        .captcha-section label {
+            color: #fff;
+            display: block; /* Ensure it appears on a new line */
+            margin-bottom: 5px; /* Space between label and input */
+        }
+
+        .captcha-section input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px; /* Space between input and label */
+            background-color: #333;
+            border: 1px solid #6a1b9a;
+            color: #fff;
+        }
+
+        .captcha-section input:focus {
+            border-color: #9c27b0; /* Lighter purple for focused input */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="list-unstyled">
+                    {% for category, message in messages %}
+                        <li class="alert {% if category == 'success' %}success{% else %}danger{% endif %}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('register.register') }}">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+      <!--
+            <div class="captcha-section">
+                <img src="{{ url_for('static', filename='captcha.png') }}?{{ timestamp }}" alt="CAPTCHA Image"><br>
+                <label for="captcha">Enter CAPTCHA:</label>
+                <input type="text" name="captcha" required><br><br>
+            </div>
+    -->
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <p class="mt-3 text-center text-light">
+            Already have an account? <a href="{{ url_for('login.login') }}">Login here</a>
+        </p>
+    </div>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

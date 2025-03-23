@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Link to your custom styles.css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    <!-- Favicon icon -->
+    <link rel="icon"  href="{{ url_for('static', filename='second.png') }}">
+
+    <style>
+        /* Gradient background from purple to black */
+        body {
+            background: linear-gradient(135deg, #6a1b9a, #121212); /* Purple to black gradient */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Reduced width container for portrait layout */
+        .container {
+            background-color: rgba(31, 31, 31, 0.8);  /* Semi-transparent black for the form container */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;  /* Set a max-width to make the container more narrow */
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            color: #fff;
+        }
+
+        .form-control {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #6a1b9a;  /* Purple border */
+        }
+
+        .form-control:focus {
+            border-color: #9c27b0;  /* Lighter purple */
+        }
+
+        button {
+            background-color: #6a1b9a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #9c27b0;  /* Lighter purple */
+        }
+
+        .alert {
+            color: #fff;
+            background-color: #d32f2f;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert.success {
+            background-color: #388e3c;
+        }
+
+        .text-center a {
+            color: #fff;
+        }
+
+        .text-center a:hover {
+            color: #9c27b0;  /* Purple hover for the link */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="list-unstyled">
+                    {% for category, message in messages %}
+                        <li class="alert {% if category == 'success' %}success{% else %}danger{% endif %}">
+                            {{ message }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login.login') }}">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+
+        <p class="mt-3 text-center text-light">
+            Don't have an account? <a href="{{ url_for('register.register') }}">Register here</a>
+        </p>
+    </div>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+"""
+
+CODE TO GET CONTACTS
+
+
+
+"""
+
+
+
+
+
+from flask import Flask, render_template, session
+import sqlite3
+#from conn2 import create_connection, insert_user, insert_contact, insert_audit, insert_message
+
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Required for session management
+
+
+# Function to create a database connection
+def create_connection():
+    conn = sqlite3.connect('restart.db')
+    conn.row_factory = sqlite3.Row  # Enable dict-like access for rows
+    return conn
+
+
+# Function to fetch contacts and their names for a specific user
+def get_user_contacts(user_id):
+    query = """
+    SELECT 
+        c.contact_id,    -- Contact ID from the contacts table
+        u.name           -- Name of the contact from the user table
+    FROM 
+        contacts c
+    JOIN 
+        user u
+    ON 
+        c.contact_id = u.id
+    WHERE 
+        c.user_id = ?;  -- Fetch contacts related to the given user_id
+    """
+    try:
+        conn = create_connection()
+        cur = conn.cursor()
+        cur.execute(query, (user_id,))
+        contacts = cur.fetchall()
+        conn.close()
+        return contacts
+    except sqlite3.Error as e:
+        print(f"Error fetching contacts: {e}")
+        return []
+
+
+# Route for chat interface
+@app.route('/chat', methods=['GET'])
+def chat():
+    user_id = session.get('user_id',2)  # Default to user_id 1 for testing
+    contacts = get_user_contacts(user_id)  # Fetch contacts for the logged-in user
+    return render_template('chat.html', contacts=contacts)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+    
+    
+    

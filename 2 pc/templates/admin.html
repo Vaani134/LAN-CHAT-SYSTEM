@@ -1,0 +1,146 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+
+    <style>
+        /* Add styles here for each section */
+        #manage-users-section, #view-audit-logs-section, #broadcast-msg-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Welcome, Admin!</h2>
+            <p>Manage the application from here. Choose an option below:</p>
+            <ul>
+                <li><button id="manage-users-btn">Manage Users</button></li>
+                <li><button id="view-audit-logs-btn">View Audit Logs</button></li>
+                <li><button id="broadcast-msg-btn">Broadcast Message</button></li>
+            </ul>
+
+            <!-- Manage Users Section -->
+            <div id="manage-users-section" style="display:none;">
+                <h3>Manage Users</h3>
+                <div id="user-table"></div>
+                <button id="add-user-btn">Add User</button>
+            </div>
+
+            <!-- View Audit Logs Section -->
+            <div id="view-audit-logs-section" style="display:none;">
+                <h3>Audit Logs</h3>
+                <div id="audit-logs-table"></div>
+            </div>
+
+            <!-- Broadcast Message Section -->
+            <div id="broadcast-msg-section" style="display:none;">
+                <h3>Broadcast Message</h3>
+                <textarea id="broadcast-msg-text" placeholder="Enter your message here"></textarea>
+                <button id="send-broadcast-btn">Send Broadcast</button>
+            </div>
+
+            <a href="/logout" class="button">Logout</a>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function() {
+            // Manage Users
+            $("#manage-users-btn").click(function() {
+                // Hide all sections before showing the relevant one
+                $("#view-audit-logs-section, #broadcast-msg-section").hide();
+                $("#manage-users-section").toggle();
+
+                $.ajax({
+                    url: "/manage_users",
+                    method: "GET",
+                    success: function(data) {
+                        let usersTable = "<table><tr><th>Name</th><th>Email</th><th>Actions</th></tr>";
+                        data.forEach(user => {
+                            usersTable += `<tr><td>${user.name}</td><td>${user.email}</td><td><button class="delete-user" data-id="${user.id}">Delete</button></td></tr>`;
+                        });
+                        usersTable += "</table>";
+                        $("#user-table").html(usersTable);
+                    }
+                });
+            });
+
+            // View Audit Logs
+            $("#view-audit-logs-btn").click(function() {
+                // Hide all sections before showing the relevant one
+                $("#manage-users-section, #broadcast-msg-section").hide();
+                $("#view-audit-logs-section").toggle();
+
+                $.ajax({
+                    url: "/view_audit_logs",
+                    method: "GET",
+                    success: function(data) {
+                        let auditTable = "<table><tr><th>User ID</th><th>Activity</th><th>Timestamp</th><th>IP Address</th></tr>";
+                        data.forEach(log => {
+                            auditTable += `<tr><td>${log.user_id}</td><td>${log.activity}</td><td>${log.timestamp}</td><td>${log.ip_address}</td></tr>`;
+                        });
+                        auditTable += "</table>";
+                        $("#audit-logs-table").html(auditTable);
+                    }
+                });
+            });
+
+            // Broadcast Message
+            $("#broadcast-msg-btn").click(function() {
+                // Hide all sections before showing the relevant one
+                $("#manage-users-section, #view-audit-logs-section").hide();
+                $("#broadcast-msg-section").toggle();
+            });
+
+            $("#send-broadcast-btn").click(function() {
+                let message = $("#broadcast-msg-text").val();
+                if (message.trim() === "") {
+                    alert("Message cannot be empty.");
+                    return;
+                }
+                $.ajax({
+                    url: "/broadcast",
+                    method: "POST",
+                    data: { message: message },
+                    success: function(response) {
+                        alert(response.message);
+                    },
+                    error: function(err) {
+                        alert("Error: " + err.responseJSON.error);
+                    }
+                });
+            });
+
+            // Delete User Action
+            $(document).on("click", ".delete-user", function() {
+                const userId = $(this).data("id");
+                if (confirm("Are you sure you want to delete this user?")) {
+                    $.ajax({
+                        url: "/delete_user",
+                        method: "POST",
+                        data: { user_id: userId },
+                        success: function(response) {
+                            alert(response.message);
+                            location.reload();  // Reload the page to reflect changes
+                        },
+                        error: function(err) {
+                            alert("Error deleting user: " + err.responseJSON.error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

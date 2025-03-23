@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broadcast Message</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Broadcast Message</h1>
+
+        <!-- Broadcast Message Form -->
+        <form id="broadcastForm">
+            <label for="message">Enter your broadcast message:</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+            <button type="submit" class="btn">Send Broadcast</button>
+        </form>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status hidden"></div>
+    </div>
+
+    <script>
+        // Handle the form submission using AJAX
+        $(document).ready(function () {
+            $("#broadcastForm").on("submit", function (e) {
+                e.preventDefault();
+
+                // Get the message from the form
+                const message = $("#message").val();
+
+                // Send the broadcast message via AJAX
+                $.ajax({
+                    url: "/broadcast",
+                    type: "POST",
+                    data: { message: message },
+                    success: function (response) {
+                        // Display success message
+                        $("#statusMessage").removeClass("hidden").addClass("success").text(response.message);
+                    },
+                    error: function (xhr, status, error) {
+                        // Display error message
+                        $("#statusMessage").removeClass("hidden").addClass("error").text("An error occurred while sending the message.");
+                    }
+                });
+
+                // Clear the input field
+                $("#message").val("");
+            });
+        });
+    </script>
+</body>
+</html>
